@@ -12,7 +12,7 @@ let cronJob;
 const checkExamResult = async (bot) => {
 
     console.log("Checking result")
-    const sem = '4';
+    const sem = '3';
 
     var options = {
         method: 'POST',
@@ -50,14 +50,14 @@ const checkExamResult = async (bot) => {
             // Add the extracted data to the array
             exams.push({ value, text });
         });
-        if (exams[1].text.includes('2024')) {
+        if (exams[2].text.includes('2023')) {
             console.log(exams)
             console.log("result declared")
             const channel = await bot.channels.fetch('1245662669952782450')
             channel.send('Result Declared')
             const yogi = await bot.users.fetch('772342884325916694')
             yogi.send('Result Declared')
-            fetchAllResults(bot, sem, exams[1].value)
+            fetchAllResults(bot, sem, exams[2].value)
             cronJob.stop();
         }
         else
