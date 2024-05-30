@@ -11,6 +11,7 @@ let cronJob;
  */
 const checkExamResult = async (bot) => {
 
+    console.log("Checking result")
     const sem = '4';
 
     var options = {
@@ -30,7 +31,8 @@ const checkExamResult = async (bot) => {
             ddlSem: sem,
             ddlScheduleExam: '0',
             txtEnrNo: ''
-        }
+        },
+        timeout: 60000
     };
 
     axios.request(options).then(async function (response) {
