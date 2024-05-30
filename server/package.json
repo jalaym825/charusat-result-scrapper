@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prisma": "npx prisma generate && npx prisma db push",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && prisma db push",
     "start": "npm run prisma && node server.js"
   },
   "author": "",

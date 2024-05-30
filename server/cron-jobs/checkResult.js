@@ -48,8 +48,8 @@ const checkExamResult = async (bot) => {
             // Add the extracted data to the array
             exams.push({ value, text });
         });
-        console.log(exams)
         if (exams[1].text.includes('2024')) {
+            console.log(exams)
             console.log("result declared")
             const channel = await bot.channels.fetch('1245662669952782450')
             channel.send('Result Declared')
