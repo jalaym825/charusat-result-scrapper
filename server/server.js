@@ -157,6 +157,17 @@ server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
+client.on('error', (e) => {
+    console.log(e)
+})
+client.on('warn', (e) => {
+    console.log(e)
+})
+// comment the below one out when not using it to debug
+client.on('debug', (e) => {
+    console.log(e)
+})
+
 
 process.on('uncaughtException', async (err) => {
     console.error(err);
