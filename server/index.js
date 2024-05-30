@@ -88,9 +88,9 @@ const fetchResult = async (enrollmentNumber, bot, sem, examNo) => {
             }
         });
 
-        pdf.create(response.data, { orientation: 'landscape', format: 'A3' }).toFile(`./results/${enrollmentNumber}.pdf`, function (err, res) {
-            if (err) return console.log(err);
-        });
+        // pdf.create(response.data, { orientation: 'landscape', format: 'A3' }).toFile(`./results/${enrollmentNumber}.pdf`, function (err, res) {
+        //     if (err) return console.log(err);
+        // });
 
         await prisma.$transaction(
             courses.map(course => prisma.subjectResult.create({ data: course }))
