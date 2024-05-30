@@ -1,0 +1,28 @@
+{
+  "name": "charusat-result-scrapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prisma": "npx prisma generate && npx prisma db push"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "cron": "^3.1.7",
+    "discord.js": "^14.15.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "html-pdf": "^3.0.1",
+    "node-cron": "^3.0.3",
+    "pdf-lib": "^1.17.1",
+    "pdfkit": "^0.15.0",
+    "prisma": "^5.14.0",
+    "ws": "^8.17.0"
+  }
+}

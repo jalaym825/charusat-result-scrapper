@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Results</title>
+</head>
+
+<body>
+    <h1>Download Results</h1>
+    <form id="downloadForm">
+        <label for="id">ID:</label><br>
+        <input type="text" id="id" name="id" required><br><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+        <input type="submit" value="Download">
+    </form>
+    <div id="progress" style="display: none;">
+        <progress id="progressBar" value="0" max="100"></progress>
+        <span id="progressText">0%</span>
+    </div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:3000');
+
+        ws.onmessage = function (event) {
+            const progress = event.data;
+            document.getElementById("progressBar").value = progress;
+            document.getElementById("progressText").innerText = `${progress}%`;
+        };
+
+        document.getElementById("downloadForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const id = document.getElementById("id").value;
+            const password = document.getElementById("password").value;
+
+            // Show progress bar
+            document.getElementById("progress").style.display = "block";
+
+            // Send download request
+            fetch("/download", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id, password })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error downloading results');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    // alert(data); // Show success message
+                })
+                .catch(error => {
+                    console.error("Error downloading results:", error);
+                    // alert('Error downloading results. Please try again.');
+                });
+        });
+    </script>
+</body>
+
+</html>
