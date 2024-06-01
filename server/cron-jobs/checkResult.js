@@ -10,6 +10,7 @@ class checkExamResult {
     static bot;
     static statusChannel = '-4257096549';
     static failedChannel = '-4202736514';
+    static declaredChannel = '-4266737269';
     static completed = 0;
     static enrollmentNumbers = Array.from({ length: 140 }, (_, i) => {
         if (i < 9) return `22ce00${i + 1}`;
@@ -25,7 +26,7 @@ class checkExamResult {
      */
     static start = async (bot) => {
         this.bot = bot;
-        this.cronJob = cron.schedule('*/2 * * * *', async () => {
+        this.cronJob = cron.schedule('*/1 * * * *', async () => {
             await this.checkExamResultDeclared(this.bot);
         });
     }
@@ -36,6 +37,10 @@ class checkExamResult {
      */
     static sendStatusMessage = async (message) => {
         await this.bot.telegram.sendMessage(this.statusChannel, message);
+    }
+
+    static sendDeclaredMessage = async () => {
+        await this.bot.telegram.sendMessage(this.declaredChannel, `Result declared`);
     }
 
     /**
@@ -74,7 +79,8 @@ class checkExamResult {
                         ddlSem: sem,
                         ddlScheduleExam: examNo,
                         txtEnrNo: enrollmentNumber
-                    }
+                    },
+                    timeout: 60000
                 };
 
                 const response = await axios.request(options);
@@ -236,7 +242,7 @@ class checkExamResult {
             if (exams[1].text.includes('2024')) {
                 console.log("result declared")
 
-                await this.sendStatusMessage("Result Declared")
+                await this.sendDeclaredMessage("Result Declared")
 
                 await prisma.isDeclared.upsert({
                     where: { id: 1 },
