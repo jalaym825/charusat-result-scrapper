@@ -19,9 +19,9 @@ class checkExamResult {
     static cronJob;
 
     static start = async () => {
-        // this.cronJob = cron.schedule('*/1 * * * *', async () => {
+        setInterval(async () => {
             await this.checkExamResultDeclared();
-        // });
+        }, 60000);
     }
 
     /**
