@@ -16,11 +16,12 @@ class checkExamResult {
         if (i <= 140) return `22ce${i + 1}`;
         return `d21ce${i + 1}`;
     });
+    static interval;
     static cronJob;
 
     static start = async () => {
         await this.checkExamResultDeclared();
-        setInterval(async () => {
+        this.interval = setInterval(async () => {
             await this.checkExamResultDeclared();
         }, 300000);
     }
@@ -249,8 +250,8 @@ class checkExamResult {
 
                 this.fetchAllResults(sem, exams[1].value)
 
-                if (this.cronJob)
-                    this.cronJob.stop();
+                if (this.interval)
+                    clearInterval(this.interval);
             }
             else {
                 console.log("Result not declared")
