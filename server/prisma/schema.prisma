@@ -30,3 +30,8 @@ model subjectResult {
   studentId      String
   student        student @relation("student_subjects", fields: [studentId], references: [id])
 }
+
+model isDeclared {
+  id       Int  @id @default(1)
+  declared Boolean @default(false)
+}

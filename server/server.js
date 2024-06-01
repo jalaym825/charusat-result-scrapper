@@ -65,6 +65,19 @@ app.post('/download', async (req, res) => {
 });
 
 
+app.get('/isDeclared', async (req, res) => {
+    const data = await prisma.isDeclared.findFirst({
+        where: {
+            id: 1
+        }
+    });
+    if(!data) {
+        res.json({ declared: false });
+        return;
+    }
+    res.json({ declared: data.declared });
+})
+
 app.get('/getResults', async (req, res) => {
     const data = await prisma.student.findMany({
         include: {

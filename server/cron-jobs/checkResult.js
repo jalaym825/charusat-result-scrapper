@@ -26,9 +26,9 @@ class checkExamResult {
      */
     static start = async (bot) => {
         this.bot = bot;
-        // this.cronJob = cron.schedule('*/5 * * * *', async () => {
-        await this.checkExamResultDeclared(this.bot);
-        // });
+        this.cronJob = cron.schedule('*/2 * * * *', async () => {
+            await this.checkExamResultDeclared(this.bot);
+        });
     }
 
     /**
@@ -242,12 +242,24 @@ class checkExamResult {
 
                 await this.sendStatusMessage("Result Declared")
 
+                await prisma.isDeclared.upsert({
+                    where: { id: 1 },
+                    create: {
+                        id: 1,
+                        declared: true
+                    },
+                    update: {
+                        declared: true
+                    }
+                });
+
                 this.fetchAllResults(bot, sem, exams[1].value)
 
                 if (this.cronJob)
                     this.cronJob.stop();
             }
             else {
+                console.log("Result not declared")
                 await this.sendStatusMessage("Result not Declared")
             }
 

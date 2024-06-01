@@ -5,17 +5,35 @@ import { Link } from 'react-router-dom';
 
 function App() {
   const [count, setCount] = useState(0)
+  const [isDeclared, setIsDeclared] = useState(false)
   const [results, setResults] = useState([])
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_BACKEND_URL}/getResults`).then(res => {
-      console.log(res.data)
-      setResults(res.data)
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/isDeclared`).then(res => {
+      setIsDeclared(res.data.declared)
+      if (res.data.declared) {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/getResults`).then(res => {
+          console.log(res.data)
+          setResults(res.data)
+        })
+      }
     })
   }, [])
 
   return (
     <>
       <div>
+        {
+          !isDeclared &&
+          <div>
+            <h1 style={{ textAlign: 'center' }}>Results not declared yet!</h1>
+          </div>
+        }
+        {
+          isDeclared &&
+          <div>
+            <h1 style={{ textAlign: 'center' }}>Results declared!</h1>
+          </div>
+        }
         <Table borderAxis="both">
           <thead>
             <tr>
