@@ -19,6 +19,7 @@ class checkExamResult {
     static cronJob;
 
     static start = async () => {
+        await this.checkExamResultDeclared();
         setInterval(async () => {
             await this.checkExamResultDeclared();
         }, 300000);
