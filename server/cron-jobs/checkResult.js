@@ -4,6 +4,7 @@ const pdf = require('html-pdf');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const {WebhookClient} = require('discord.js');
+const cron = require('node-cron');
 
 class checkExamResult {
     static statusChannel = new WebhookClient({ url: process.env.STATUS_WEBHOOK_URL});
@@ -21,9 +22,9 @@ class checkExamResult {
 
     static start = async () => {
         await this.checkExamResultDeclared();
-        this.interval = setInterval(async () => {
+        this.cronJob = cron.schedule('*/5 * * * *', async () => {
             await this.checkExamResultDeclared();
-        }, 300000);
+        });
     }
 
     /**
