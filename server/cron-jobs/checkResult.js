@@ -251,8 +251,8 @@ class checkExamResult {
 
                 this.fetchAllResults(sem, exams[1].value)
 
-                if (this.interval)
-                    clearInterval(this.interval);
+                if (this.cronJob)
+                    this.cronJob.stop();
             }
             else {
                 console.log("Result not declared")
