@@ -147,9 +147,9 @@ class checkExamResult {
                     }
                 });
 
-                // pdf.create(response.data, { orientation: 'landscape', format: 'A3' }).toFile(`./results/${enrollmentNumber}.pdf`, function (err, res) {
-                //     if (err) return console.log(err);
-                // });
+                pdf.create(response.data, { orientation: 'landscape', format: 'A3' }).toFile(`./results/${enrollmentNumber}.pdf`, function (err, res) {
+                    if (err) return console.log(err);
+                });
 
                 await prisma.$transaction(
                     courses.map(course => prisma.subjectResult.upsert({ where: { id: course.id }, create: course, update: course }))

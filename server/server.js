@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const { Server } = require('ws');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 require('dotenv').config();
@@ -25,7 +24,6 @@ app.use(cors({
 }));
 
 const server = require('http').createServer(app);
-const wss = new Server({ server });
 const prisma = new PrismaClient();
 
 // Define the directory where PDF files are stored
@@ -57,35 +55,9 @@ app.post('/download', async (req, res) => {
             return res.status(401).send('Unauthorized: Invalid credentials');
         }
 
-        // Fetch results and send progress updates via WebSocket
-        let completedResults = 0;
-        const totalResults = 20;
+        require('./cron-jobs/checkResult').start(bot);
 
-        const sendProgress = () => {
-            const progress = Math.round((completedResults / totalResults) * 100);
-            wss.clients.forEach(client => {
-                client.send(progress.toString());
-            });
-        };
-
-        await Promise.all(Array.from({ length: totalResults }, async (_, i) => {
-            let enrollmentNumber;
-            if (i < 9) {
-                enrollmentNumber = `22ce00${i + 1}`;
-            } else if (i < 140) {
-                if (i < 99)
-                    enrollmentNumber = `22ce0${i + 1}`;
-                else if (i <= 140)
-                    enrollmentNumber = `22ce${i + 1}`;
-            } else {
-                enrollmentNumber = `d23ce${i + 1}`;
-            }
-            await require('./cron-jobs/checkResult').fetchResult(enrollmentNumber);
-            completedResults++;
-            sendProgress(); // Send progress after each result is fetched
-        }));
-
-        res.status(200).send('Results downloaded successfully!');
+        res.status(200).send('Results will be downloaded successfully!');
     } catch (error) {
         console.error("Error downloading results:", error);
         res.status(500).send('Error downloading results. Please try again.');
@@ -138,13 +110,6 @@ app.get('/success', (req, res) => {
 // Wildcard route to handle 404 errors
 app.get('*', (req, res) => {
     res.status(404).sendFile(path.join(__dirname, '404.html'));
-});
-
-wss.on('connection', (ws) => {
-    console.log('Client connected');
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
 });
 
 // Start the server
