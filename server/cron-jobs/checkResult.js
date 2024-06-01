@@ -21,7 +21,7 @@ class checkExamResult {
     static start = async () => {
         setInterval(async () => {
             await this.checkExamResultDeclared();
-        }, 60000);
+        }, 300000);
     }
 
     /**
@@ -261,4 +261,6 @@ class checkExamResult {
         });
     }
 }
-checkExamResult.start();
+// checkExamResult.start();
+
+module.exports = checkExamResult;

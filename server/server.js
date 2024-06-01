@@ -5,6 +5,8 @@ const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 require('dotenv').config();
 
+require('./cron-jobs/checkResult').start();
+
 const app = express();
 
 app.use(cors({
