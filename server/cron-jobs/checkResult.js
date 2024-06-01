@@ -199,7 +199,7 @@ class checkExamResult {
     static checkExamResultDeclared = async (bot) => {
         await this.sendStatusMessage();
         console.log("Checking result")
-        const sem = '3';
+        const sem = '4';
 
         var options = {
             method: 'POST',
@@ -237,12 +237,12 @@ class checkExamResult {
                 // Add the extracted data to the array
                 exams.push({ value, text });
             });
-            if (exams[2].text.includes('2023')) {
+            if (exams[1].text.includes('2024')) {
                 console.log("result declared")
 
                 await this.sendStatusMessage("Result Declared")
 
-                this.fetchAllResults(bot, sem, exams[2].value)
+                this.fetchAllResults(bot, sem, exams[1].value)
 
                 if (this.cronJob)
                     this.cronJob.stop();
