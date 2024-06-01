@@ -8,16 +8,15 @@ const cron = require('node-cron');
 
 class checkExamResult {
     static bot;
-    static statusChannel = '6833665542';
+    static statusChannel = '-4257096549';
+    static failedChannel = '-4202736514';
     static completed = 0;
-    static msg;
     static enrollmentNumbers = Array.from({ length: 140 }, (_, i) => {
         if (i < 9) return `22ce00${i + 1}`;
         if (i < 99) return `22ce0${i + 1}`;
         if (i <= 140) return `22ce${i + 1}`;
         return `d21ce${i + 1}`;
     });
-    static failedChannel = '-4202736514';
     static cronJob;
 
     /**
@@ -36,10 +35,7 @@ class checkExamResult {
      * @param {string} message 
      */
     static sendStatusMessage = async (message) => {
-        if (message)
-            await this.bot.telegram.editMessageText(this.statusChannel, this.msg.message_id, null, message);
-        else
-            this.msg = await this.bot.telegram.sendMessage(this.statusChannel, "Checking Result");
+        await this.bot.telegram.sendMessage(this.statusChannel, message);
     }
 
     /**
@@ -189,7 +185,7 @@ class checkExamResult {
             await Promise.all(batch.map(num => this.fetchResult(num, bot, sem, examNo)));
         }
 
-        await bot.telegram.editMessageText('6833665542', this.msg.message_id, null, `Fetching All Results: ${this.completed}/${this.enrollmentNumbers.length} completed`);
+        await this.sendStatusMessage(`Fetching All Results: ${this.completed}/${this.enrollmentNumbers.length} completed`);
     }
 
     /**
@@ -197,7 +193,7 @@ class checkExamResult {
      * @param {import('telegraf').Telegraf} bot 
      */
     static checkExamResultDeclared = async (bot) => {
-        await this.sendStatusMessage();
+        await this.sendStatusMessage("Checking result");
         console.log("Checking result")
         const sem = '3';
 
