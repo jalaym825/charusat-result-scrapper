@@ -147,7 +147,11 @@ class checkExamResult {
                     }
                 });
 
-                pdf.create(response.data, { orientation: 'landscape', format: 'A3' }).toFile(`./results/${enrollmentNumber}.pdf`, function (err, res) {
+                pdf.create(response.data, { orientation: 'landscape', format: 'A3', childProcessOptions: {
+                    env: {
+                        OPENSSL_CONF: '/dev/null',
+                    }
+                } }).toFile(`./results/${enrollmentNumber}.pdf`, function (err, res) {
                     if (err) return console.log(err);
                 });
 
