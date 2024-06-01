@@ -5,15 +5,6 @@ const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 require('dotenv').config();
 
-
-const { Telegraf } = require('telegraf')
-const bot = new Telegraf(process.env.BOT_TOKEN)
-bot.launch()
-bot.on('chat_shared', (ctx) => {
-    console.log(ctx)
-})
-require('./cron-jobs/checkResult').start(bot)
-
 const app = express();
 
 app.use(cors({

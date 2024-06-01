@@ -1,16 +1,14 @@
 const axios = require("axios").default;
 const cheerio = require("cheerio");
 const pdf = require('html-pdf');
-const fs = require('fs');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const cron = require('node-cron');
+const {WebhookClient} = require('discord.js');
 
 class checkExamResult {
-    static bot;
-    static statusChannel = '-4257096549';
-    static failedChannel = '-4202736514';
-    static declaredChannel = '-4266737269';
+    static statusChannel = new WebhookClient({ url: process.env.STATUS_WEBHOOK_URL});
+    static failedChannel = new WebhookClient({ url: process.env.FAILED_WEBHOOK_URL});
+    static declaredChannel = new WebhookClient({ url: process.env.DECLARED_WEBHOOK_URL});
     static completed = 0;
     static enrollmentNumbers = Array.from({ length: 140 }, (_, i) => {
         if (i < 9) return `22ce00${i + 1}`;
@@ -20,15 +18,10 @@ class checkExamResult {
     });
     static cronJob;
 
-    /**
-     * 
-     * @param {import('telegraf').Telegraf} bot 
-     */
-    static start = async (bot) => {
-        this.bot = bot;
-        this.cronJob = cron.schedule('*/1 * * * *', async () => {
-            await this.checkExamResultDeclared(this.bot);
-        });
+    static start = async () => {
+        // this.cronJob = cron.schedule('*/1 * * * *', async () => {
+            await this.checkExamResultDeclared();
+        // });
     }
 
     /**
@@ -36,11 +29,11 @@ class checkExamResult {
      * @param {string} message 
      */
     static sendStatusMessage = async (message) => {
-        await this.bot.telegram.sendMessage(this.statusChannel, message);
+        await this.statusChannel.send(message);
     }
 
     static sendDeclaredMessage = async () => {
-        await this.bot.telegram.sendMessage(this.declaredChannel, `Result declared`);
+        await this.declaredChannel.send(`@everyone Result declared`);
     }
 
     /**
@@ -48,18 +41,17 @@ class checkExamResult {
      * @param {string} enrollmentNumber 
      */
     static sendFailedMessage = async (enrollmentNumber) => {
-        await this.bot.telegram.sendMessage(this.failedChannel, `Result not declared for enrollment number: ${enrollmentNumber}`);
+        await this.failedChannel.send(`Result not declared for enrollment number: ${enrollmentNumber}`);
     }
 
     /**
      * 
      * @param {string} enrollmentNumber 
-     * @param {import('telegraf').Telegraf} bot 
      * @param {string} sem 
      * @param {string} examNo 
      * @returns 
      */
-    static fetchResult = async (enrollmentNumber, bot, sem, examNo) => {
+    static fetchResult = async (enrollmentNumber, sem, examNo) => {
         let retries = 0;
         let failed = false;
         do {
@@ -179,16 +171,15 @@ class checkExamResult {
 
     /**
      * 
-     * @param {import('telegraf').Telegraf} bot 
      * @param {string} sem 
      * @param {string} examNo 
      */
-    static fetchAllResults = async (bot, sem, examNo) => {
+    static fetchAllResults = async (sem, examNo) => {
         const batchSize = 10;
 
         for (let i = 0; i < this.enrollmentNumbers.length; i += batchSize) {
             const batch = this.enrollmentNumbers.slice(i, i + batchSize);
-            await Promise.all(batch.map(num => this.fetchResult(num, bot, sem, examNo)));
+            await Promise.all(batch.map(num => this.fetchResult(num, sem, examNo)));
         }
 
         await this.sendStatusMessage(`Fetching All Results: ${this.completed}/${this.enrollmentNumbers.length} completed`);
@@ -198,7 +189,7 @@ class checkExamResult {
      * 
      * @param {import('telegraf').Telegraf} bot 
      */
-    static checkExamResultDeclared = async (bot) => {
+    static checkExamResultDeclared = async () => {
         await this.sendStatusMessage("Checking result");
         console.log("Checking result")
         const sem = '4';
@@ -255,7 +246,7 @@ class checkExamResult {
                     }
                 });
 
-                this.fetchAllResults(bot, sem, exams[1].value)
+                this.fetchAllResults(sem, exams[1].value)
 
                 if (this.cronJob)
                     this.cronJob.stop();
@@ -270,4 +261,4 @@ class checkExamResult {
         });
     }
 }
-module.exports = checkExamResult;
+checkExamResult.start();
