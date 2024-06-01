@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
         {
-            "src": "cron-jobs/checkResult.js",
+            "src": "server.js",
             "use": "@vercel/node",
             "config": {
                 "includeFiles": [
@@ -14,7 +14,7 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "cron-jobs/checkResult.js"
+            "dest": "server.js"
         }
     ]
 }
