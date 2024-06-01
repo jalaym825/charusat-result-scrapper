@@ -22,7 +22,7 @@ model student {
 }
 
 model subjectResult {
-  id             String  @id @default(cuid())
+  id             String  @id
   name           String
   code           String
   theoryGrade    String?

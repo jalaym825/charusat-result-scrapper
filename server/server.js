@@ -1,21 +1,17 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const {fetchResult} = require('./index');
 const { Server } = require('ws');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
-const { Client } = require('discord.js');
 require('dotenv').config();
-// const allIntents = new IntentsBitField(3276799);
-const client = new Client({ intents: [3276799] });
 
-client.on('ready', async (client) => {
-    console.log(`Logged in as ${client.user.tag}!`);
-    require('./cron-jobs/checkResult')(client)
-});
 
-client.login(process.env.TOKEN);
+const { Telegraf } = require('telegraf')
+const bot = new Telegraf(process.env.BOT_TOKEN)
+bot.launch()
+
+require('./cron-jobs/checkResult').start(bot)
 
 const app = express();
 
@@ -84,7 +80,7 @@ app.post('/download', async (req, res) => {
             } else {
                 enrollmentNumber = `d23ce${i + 1}`;
             }
-            await fetchResult(enrollmentNumber);
+            await require('./cron-jobs/checkResult').fetchResult(enrollmentNumber);
             completedResults++;
             sendProgress(); // Send progress after each result is fetched
         }));
@@ -156,17 +152,6 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
-client.on('error', (e) => {
-    console.log(e)
-})
-client.on('warn', (e) => {
-    console.log(e)
-})
-// comment the below one out when not using it to debug
-client.on('debug', (e) => {
-    console.log(e)
-})
 
 
 process.on('uncaughtException', async (err) => {

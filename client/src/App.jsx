@@ -7,7 +7,7 @@ function App() {
   const [count, setCount] = useState(0)
   const [results, setResults] = useState([])
   useEffect(() => {
-    axios.get('http://localhost:3000/getResults').then(res => {
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/getResults`).then(res => {
       console.log(res.data)
       setResults(res.data)
     })
