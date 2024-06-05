@@ -16,7 +16,7 @@ class checkExamResult {
         if (i < 9) return `22ce00${i + 1}`;
         if (i < 99) return `22ce0${i + 1}`;
         if (i <= 140) return `22ce${i + 1}`;
-        return `d21ce${i + 1}`;
+        return `d23ce${i + 1}`;
     });
     static interval;
     static cronJob;
@@ -61,6 +61,13 @@ class checkExamResult {
         do {
 
             try {
+
+                if (await prisma.student.findUnique({ where: { id: enrollmentNumber } })) {
+                    console.log("Result already fetched for enrollment number:", enrollmentNumber);
+                    return;
+                }
+
+    
                 var options = {
                     method: 'POST',
                     url: 'https://charusat.edu.in:912/Uniexamresult/frmUniversityResult.aspx',

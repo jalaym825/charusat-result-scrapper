@@ -49,7 +49,6 @@ function App() {
                 CSPIT-CE
               </th> */}
               <th rowSpan={2} style={{ textAlign: 'center' }}>SGPA</th>
-              <th rowSpan={2} style={{ textAlign: 'center' }}>CGPA</th>
               <th rowSpan={2} style={{ textAlign: 'center' }}>Download</th>
             </tr>
             <tr>
@@ -102,7 +101,6 @@ function App() {
                   </>
                 ))}
                 <td>{student.sgpa}</td>
-                <td>{student.cgpa}</td>
                 <td style={{ textAlign: 'center' }}><Link target='_blank' to={`${import.meta.env.VITE_BACKEND_URL}/results/${student.id}`}>Download</Link></td>
               </tr>
             ))}
