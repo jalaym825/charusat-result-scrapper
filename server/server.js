@@ -40,24 +40,24 @@ app.get('/', (req, res) => {
 });
 
 // Route to handle form submission and download of results
-app.post('/download', async (req, res) => {
-    try {
-        const { id, password } = req.body;
+// app.post('/download', async (req, res) => {
+//     try {
+//         const { id, password } = req.body;
 
-        // Verify user credentials
-        const user = authorizedUsers.find(user => user.id === id && user.password === password);
-        if (!user) {
-            return res.status(401).send('Unauthorized: Invalid credentials');
-        }
+//         // Verify user credentials
+//         const user = authorizedUsers.find(user => user.id === id && user.password === password);
+//         if (!user) {
+//             return res.status(401).send('Unauthorized: Invalid credentials');
+//         }
 
-        require('./cron-jobs/checkResult').start(bot);
+//         require('./cron-jobs/checkResult').start(bot);
 
-        res.status(200).send('Results will be downloaded successfully!');
-    } catch (error) {
-        console.error("Error downloading results:", error);
-        res.status(500).send('Error downloading results. Please try again.');
-    }
-});
+//         res.status(200).send('Results will be downloaded successfully!');
+//     } catch (error) {
+//         console.error("Error downloading results:", error);
+//         res.status(500).send('Error downloading results. Please try again.');
+//     }
+// });
 
 
 app.get('/isDeclared', async (req, res) => {
@@ -112,9 +112,9 @@ app.get('/results/:filename', (req, res) => {
 });
 
 // Route to handle success page
-app.get('/success', (req, res) => {
-    res.sendFile(path.join(__dirname, 'success.html'));
-});
+// app.get('/success', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'success.html'));
+// });
 
 // Wildcard route to handle 404 errors
 app.get('*', (req, res) => {
