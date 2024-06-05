@@ -5,13 +5,14 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const {WebhookClient} = require('discord.js');
 const cron = require('node-cron');
+const fs = require('fs');
 
 class checkExamResult {
     static statusChannel = new WebhookClient({ url: process.env.STATUS_WEBHOOK_URL});
     static failedChannel = new WebhookClient({ url: process.env.FAILED_WEBHOOK_URL});
     static declaredChannel = new WebhookClient({ url: process.env.DECLARED_WEBHOOK_URL});
     static completed = 0;
-    static enrollmentNumbers = Array.from({ length: 140 }, (_, i) => {
+    static enrollmentNumbers = Array.from({ length: 190 }, (_, i) => {
         if (i < 9) return `22ce00${i + 1}`;
         if (i < 99) return `22ce0${i + 1}`;
         if (i <= 140) return `22ce${i + 1}`;
@@ -22,9 +23,9 @@ class checkExamResult {
 
     static start = async () => {
         await this.checkExamResultDeclared();
-        this.cronJob = cron.schedule('*/5 * * * *', async () => {
-            await this.checkExamResultDeclared();
-        });
+        // this.cronJob = cron.schedule('*/5 * * * *', async () => {
+            // await this.checkExamResultDeclared();
+        // });
     }
 
     /**
@@ -68,7 +69,7 @@ class checkExamResult {
                     },
                     data: {
                         __EVENTTARGET: 'btnSearch',
-                        __VIEWSTATE: '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',
+                        __VIEWSTATE: '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',
                         ddlInst: '1',
                         ddlDegree: '39',
                         ddlSem: sem,
@@ -79,15 +80,14 @@ class checkExamResult {
                 };
 
                 const response = await axios.request(options);
-
                 const $ = cheerio.load(response.data);
 
-                // Student Name
+                // // Student Name
                 const studentName = $('#uclGrd1_lblStudentName').text().trim();
                 const sgpa = $('#uclGrd1_lblSGPA').text().trim();
-                const cgpa = $('#uclGrd1_lblCGPA').text().trim();
+                // const cgpa = $('#uclGrd1_lblCGPA').text().trim();
 
-                if (studentName === '' || sgpa === '' || cgpa === '') {
+                if (studentName === '' || sgpa === '') {
                     this.sendFailedMessage(enrollmentNumber);
                     console.log("Result not declared for enrollment number:", enrollmentNumber);
                     return;
@@ -99,12 +99,12 @@ class checkExamResult {
                         id: enrollmentNumber,
                         name: studentName,
                         sgpa: parseFloat(sgpa),
-                        cgpa: parseFloat(cgpa)
+                        // cgpa: parseFloat(cgpa)
                     },
                     update: {
                         name: studentName,
                         sgpa: parseFloat(sgpa),
-                        cgpa: parseFloat(cgpa)
+                        // cgpa: parseFloat(cgpa)
                     }
                 });
 
@@ -178,7 +178,7 @@ class checkExamResult {
      * @param {string} examNo 
      */
     static fetchAllResults = async (sem, examNo) => {
-        const batchSize = 10;
+        const batchSize = 25;
 
         for (let i = 0; i < this.enrollmentNumbers.length; i += batchSize) {
             const batch = this.enrollmentNumbers.slice(i, i + batchSize);
@@ -233,6 +233,7 @@ class checkExamResult {
                 // Add the extracted data to the array
                 exams.push({ value, text });
             });
+            console.log(exams)
             if (exams[1].text.includes('2024')) {
                 console.log("result declared")
 
@@ -264,6 +265,6 @@ class checkExamResult {
         });
     }
 }
-// checkExamResult.start();
-
-module.exports = checkExamResult;
+checkExamResult.start();
+// /
+// module.exports = checkExamResult;

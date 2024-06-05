@@ -17,7 +17,6 @@ model student {
   id       String          @id
   name     String
   sgpa     Float
-  cgpa     Float
   subjects subjectResult[] @relation("student_subjects")
 }
 
