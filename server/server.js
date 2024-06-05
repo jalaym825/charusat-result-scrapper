@@ -82,6 +82,7 @@ app.get('/getResults', async (req, res) => {
             id: 'asc'
         }
     });
+    console.log("Results requested from" + req.ip)
     res.json(data);
 })
 
