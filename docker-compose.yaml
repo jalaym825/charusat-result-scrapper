@@ -1,0 +1,53 @@
+# version: '3'
+
+services:
+  frontend:
+    container_name: frontend
+    image: frontend
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
+      - db
+    environment:
+      - VITE_BACKEND_URL=http://backend:3000
+
+  backend:
+    container_name: backend
+    image: backend
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres?schema=public
+    entrypoint: ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/psotgresql/data
+    ports:
+      - 5432:5432
+
+volumes:
+  postgres-data:
