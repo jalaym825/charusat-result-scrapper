@@ -1,10 +1,10 @@
 import Table from '@mui/joy/Table';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // const [count, setCount] = useState(0)
   const [isDeclared, setIsDeclared] = useState(false)
   const [results, setResults] = useState([])
   useEffect(() => {
@@ -19,6 +19,7 @@ function App() {
     })
   }, [])
 
+  console.log(import.meta.env.VITE_BACKEND_URL);
   return (
     <>
       <div>
@@ -53,8 +54,8 @@ function App() {
             </tr>
             <tr>
               {
-                results[0]?.subjects.map(subject => (
-                  <>
+                results[0]?.subjects.map((subject, index) => (
+                  <Fragment key={index}>
                     {
                       subject.theoryGrade && subject.practicalGrade &&
                       <>
@@ -71,7 +72,7 @@ function App() {
                       subject.practicalGrade && !subject.theoryGrade &&
                       <th style={{ textAlign: 'center' }}>Practical</th>
                     }
-                  </>
+                  </Fragment>
                 ))
               }
             </tr>
@@ -80,8 +81,8 @@ function App() {
             {results.map(student => (
               <tr key={student.id}>
                 <td>{student.id.toUpperCase()}</td>
-                {student.subjects.map(subject => (
-                  <>
+                {student.subjects.map((subject, index) => (
+                  <Fragment key={index}>
                     {subject.theoryGrade && subject.practicalGrade &&
                       <>
                         <td>{subject.theoryGrade}</td>
@@ -98,7 +99,7 @@ function App() {
                         <td>{subject.practicalGrade}</td>
                       </>
                     }
-                  </>
+                  </Fragment>
                 ))}
                 <td>{student.sgpa}</td>
                 <td style={{ textAlign: 'center' }}><Link target='_blank' to={`${import.meta.env.VITE_BACKEND_URL}/results/${student.id}`}>Download</Link></td>
